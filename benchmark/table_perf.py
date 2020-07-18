@@ -4,9 +4,10 @@ implementations and methods for distance calculation.
 """
 
 import time
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.datasets import make_classification
+
 from lime.lime_tabular import LimeTabularExplainer
+from sklearn.datasets import make_classification
+from sklearn.ensemble import RandomForestClassifier
 
 
 def interpret_data(X, y, func):

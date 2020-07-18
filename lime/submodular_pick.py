@@ -1,5 +1,6 @@
-import numpy as np
 import warnings
+
+import numpy as np
 
 
 class SubmodularPick(object):
@@ -77,7 +78,7 @@ class SubmodularPick(object):
         try:
             num_exps_desired = int(num_exps_desired)
         except TypeError:
-            return("Requested number of explanations should be an integer")
+            return ("Requested number of explanations should be an integer")
         if num_exps_desired > len(self.explanations):
             warnings.warn("""Requested number of explanations larger than
                            total number of explanations, returning all
@@ -105,7 +106,7 @@ class SubmodularPick(object):
                     W[i, features_dict[feature]] += value
 
         # Create the global importance vector, I_j described in the paper
-        importance = np.sum(abs(W), axis=0)**.5
+        importance = np.sum(abs(W), axis=0) ** .5
 
         # Now run the SP-LIME greedy algorithm
         remaining_indices = set(range(len(self.explanations)))
@@ -116,8 +117,8 @@ class SubmodularPick(object):
             current = 0
             for i in remaining_indices:
                 current = np.dot(
-                        (np.sum(abs(W)[V + [i]], axis=0) > 0), importance
-                        )  # coverage function
+                    (np.sum(abs(W)[V + [i]], axis=0) > 0), importance
+                )  # coverage function
                 if current >= best:
                     best = current
                     best_ind = i

@@ -1,10 +1,9 @@
 import time
-import sklearn
-import sklearn.ensemble
+
 import sklearn.metrics
+from lime.lime_text import LimeTextExplainer
 from sklearn.datasets import fetch_20newsgroups
 from sklearn.pipeline import make_pipeline
-from lime.lime_text import LimeTextExplainer
 
 
 def interpret_data(X, y, func, class_names):
@@ -18,6 +17,7 @@ def interpret_data(X, y, func, class_names):
         print('...')
 
     return times, scores
+
 
 if __name__ == '__main__':
     categories = ['alt.atheism', 'soc.religion.christian']

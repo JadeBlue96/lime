@@ -1,10 +1,11 @@
 import unittest
+
+import numpy as np
 from lime.wrappers.scikit_image import BaseWrapper
 from lime.wrappers.scikit_image import SegmentationAlgorithm
-from skimage.segmentation import quickshift
 from skimage.data import chelsea
+from skimage.segmentation import quickshift
 from skimage.util import img_as_float
-import numpy as np
 
 
 class TestBaseWrapper(unittest.TestCase):
@@ -71,6 +72,7 @@ class TestBaseWrapper(unittest.TestCase):
 
             def __call__(self, message):
                 return message
+
         pipo = Pipo()
         obj = BaseWrapper(pipo)
 
@@ -94,6 +96,7 @@ class TestBaseWrapper(unittest.TestCase):
                 return a + b
             else:
                 return a
+
         obj_ = BaseWrapper(baz_fn, a=10, b=100, d=1000)
         self.assertEqual(obj_.filter_params(baz_fn), {'a': 10, 'b': 100})
 

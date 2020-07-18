@@ -2,10 +2,8 @@ import unittest
 from unittest import TestCase
 
 import numpy as np
-
-from sklearn.datasets import load_iris
-
 from lime.discretize import QuartileDiscretizer, DecileDiscretizer, EntropyDiscretizer
+from sklearn.datasets import load_iris
 
 
 class TestDiscretize(TestCase):

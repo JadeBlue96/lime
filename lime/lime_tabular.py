@@ -3,21 +3,21 @@ Functions for explaining classifiers that use tabular data (matrices).
 """
 import collections
 import copy
-from functools import partial
 import json
 import warnings
+from functools import partial
 
 import numpy as np
 import scipy as sp
 import sklearn
 import sklearn.preprocessing
-from sklearn.utils import check_random_state
-
-from lime.discretize import QuartileDiscretizer
+from lime.discretize import BaseDiscretizer
 from lime.discretize import DecileDiscretizer
 from lime.discretize import EntropyDiscretizer
-from lime.discretize import BaseDiscretizer
+from lime.discretize import QuartileDiscretizer
 from lime.discretize import StatsDiscretizer
+from sklearn.utils import check_random_state
+
 from . import explanation
 from . import lime_base
 
@@ -95,10 +95,10 @@ class TableDomainMapper(explanation.DomainMapper):
                                     fweights))
             else:
                 out_dict = dict(map(lambda x: (x[0], (x[1], x[2], x[3])),
-                                zip(self.feature_indexes,
-                                    fnames,
-                                    self.feature_values,
-                                    fweights)))
+                                    zip(self.feature_indexes,
+                                        fnames,
+                                        self.feature_values,
+                                        fweights)))
                 out_list = [out_dict.get(x[0], (str(x[0]), 0.0, 0.0)) for x in exp]
         else:
             out_list = list(zip(self.exp_feature_names,
@@ -213,19 +213,19 @@ class LimeTabularExplainer(object):
 
             if discretizer == 'quartile':
                 self.discretizer = QuartileDiscretizer(
-                        training_data, self.categorical_features,
-                        self.feature_names, labels=training_labels,
-                        random_state=self.random_state)
+                    training_data, self.categorical_features,
+                    self.feature_names, labels=training_labels,
+                    random_state=self.random_state)
             elif discretizer == 'decile':
                 self.discretizer = DecileDiscretizer(
-                        training_data, self.categorical_features,
-                        self.feature_names, labels=training_labels,
-                        random_state=self.random_state)
+                    training_data, self.categorical_features,
+                    self.feature_names, labels=training_labels,
+                    random_state=self.random_state)
             elif discretizer == 'entropy':
                 self.discretizer = EntropyDiscretizer(
-                        training_data, self.categorical_features,
-                        self.feature_names, labels=training_labels,
-                        random_state=self.random_state)
+                    training_data, self.categorical_features,
+                    self.feature_names, labels=training_labels,
+                    random_state=self.random_state)
             elif isinstance(discretizer, BaseDiscretizer):
                 self.discretizer = discretizer
             else:
@@ -235,7 +235,7 @@ class LimeTabularExplainer(object):
             self.categorical_features = list(range(training_data.shape[1]))
 
             # Get the discretized_training_data when the stats are not provided
-            if(self.training_data_stats is None):
+            if (self.training_data_stats is None):
                 discretized_training_data = self.discretizer.discretize(
                     training_data)
 
@@ -347,9 +347,9 @@ class LimeTabularExplainer(object):
         else:
             scaled_data = (data - self.scaler.mean_) / self.scaler.scale_
         distances = sklearn.metrics.pairwise_distances(
-                scaled_data,
-                scaled_data[0].reshape(1, -1),
-                metric=distance_metric
+            scaled_data,
+            scaled_data[0].reshape(1, -1),
+            metric=distance_metric
         ).ravel()
 
         yss = predict_fn(inverse)
@@ -424,7 +424,7 @@ class LimeTabularExplainer(object):
             discretized_feature_names = copy.deepcopy(feature_names)
             for f in self.discretizer.names:
                 discretized_feature_names[f] = self.discretizer.names[f][int(
-                        discretized_instance[f])]
+                    discretized_instance[f])]
 
         domain_mapper = TableDomainMapper(feature_names,
                                           values,
@@ -450,13 +450,13 @@ class LimeTabularExplainer(object):
             (ret_exp.intercept[label],
              ret_exp.local_exp[label],
              ret_exp.score, ret_exp.local_pred) = self.base.explain_instance_with_data(
-                    scaled_data,
-                    yss,
-                    distances,
-                    label,
-                    num_features,
-                    model_regressor=model_regressor,
-                    feature_selection=self.feature_selection)
+                scaled_data,
+                yss,
+                distances,
+                label,
+                num_features,
+                model_regressor=model_regressor,
+                feature_selection=self.feature_selection)
 
         if self.mode == "regression":
             ret_exp.intercept[1] = ret_exp.intercept[0]
@@ -614,7 +614,7 @@ class RecurrentTabularExplainer(LimeTabularExplainer):
         # Reshape X
         n_samples, n_timesteps, n_features = training_data.shape
         training_data = np.transpose(training_data, axes=(0, 2, 1)).reshape(
-                n_samples, n_timesteps * n_features)
+            n_samples, n_timesteps * n_features)
         self.n_timesteps = n_timesteps
         self.n_features = n_features
 
@@ -624,20 +624,20 @@ class RecurrentTabularExplainer(LimeTabularExplainer):
 
         # Send off the the super class to do its magic.
         super(RecurrentTabularExplainer, self).__init__(
-                training_data,
-                mode=mode,
-                training_labels=training_labels,
-                feature_names=feature_names,
-                categorical_features=categorical_features,
-                categorical_names=categorical_names,
-                kernel_width=kernel_width,
-                kernel=kernel,
-                verbose=verbose,
-                class_names=class_names,
-                feature_selection=feature_selection,
-                discretize_continuous=discretize_continuous,
-                discretizer=discretizer,
-                random_state=random_state)
+            training_data,
+            mode=mode,
+            training_labels=training_labels,
+            feature_names=feature_names,
+            categorical_features=categorical_features,
+            categorical_names=categorical_names,
+            kernel_width=kernel_width,
+            kernel=kernel,
+            verbose=verbose,
+            class_names=class_names,
+            feature_selection=feature_selection,
+            discretize_continuous=discretize_continuous,
+            discretizer=discretizer,
+            random_state=random_state)
 
     def _make_predict_proba(self, func):
         """

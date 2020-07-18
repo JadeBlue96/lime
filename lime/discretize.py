@@ -1,12 +1,13 @@
 """
 Discretizers classes, to be used in lime_tabular
 """
+from abc import ABCMeta, abstractmethod
+
 import numpy as np
+import scipy
 import sklearn
 import sklearn.tree
-import scipy
 from sklearn.utils import check_random_state
-from abc import ABCMeta, abstractmethod
 
 
 class BaseDiscretizer():
@@ -174,7 +175,6 @@ class StatsDiscretizer(BaseDiscretizer):
 
 class QuartileDiscretizer(BaseDiscretizer):
     def __init__(self, data, categorical_features, feature_names, labels=None, random_state=None):
-
         BaseDiscretizer.__init__(self, data, categorical_features,
                                  feature_names, labels=labels,
                                  random_state=random_state)
@@ -204,7 +204,7 @@ class DecileDiscretizer(BaseDiscretizer):
 
 class EntropyDiscretizer(BaseDiscretizer):
     def __init__(self, data, categorical_features, feature_names, labels=None, random_state=None):
-        if(labels is None):
+        if (labels is None):
             raise ValueError('Labels must be not None when using \
                              EntropyDiscretizer')
         BaseDiscretizer.__init__(self, data, categorical_features,

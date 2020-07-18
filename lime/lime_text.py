@@ -1,11 +1,12 @@
 """
 Functions for explaining text classifiers.
 """
-from functools import partial
 import itertools
 import json
 import re
+from functools import partial
 
+import en_core_sci_md
 import numpy as np
 import scipy as sp
 import sklearn
@@ -98,7 +99,20 @@ class IndexedString(object):
         """
         self.raw = raw_string
         self.mask_string = 'UNKWORDZ' if mask_string is None else mask_string
+        # NLTK tokenizer
+        # sentences_span = PunktSentenceTokenizer().span_tokenize(self.raw)
+        # Scispacy tokenizer
+        nlp_sentencizer = en_core_sci_md.load()
+        nlp_tokens = nlp_sentencizer(self.raw)
+        sentences_span = []
+        for sent in nlp_tokens.sents:
+            sentences_span.append((sent.start_char, sent.end_char))
 
+        self.as_list = [self.raw[begin:end] for (begin, end) in sentences_span]
+        self.as_np = np.array(self.as_list)
+        non_word = re.compile(r'(%s)|$' % split_expression).match
+        self.string_start = np.array([begin for (begin, end) in sentences_span])
+        '''
         if callable(split_expression):
             tokens = split_expression(self.raw)
             self.as_list = self._segment_with_tokens(self.raw, tokens)
@@ -113,10 +127,12 @@ class IndexedString(object):
             splitter = re.compile(r'(%s)|$' % split_expression)
             self.as_list = [s for s in splitter.split(self.raw) if s]
             non_word = splitter.match
+			
+        '''
 
-        self.as_np = np.array(self.as_list)
-        self.string_start = np.hstack(
-            ([0], np.cumsum([len(x) for x in self.as_np[:-1]])))
+        # self.as_np = np.array(self.as_list)
+        # self.string_start = np.hstack(
+        # ([0], np.cumsum([len(x) for x in self.as_np[:-1]])))
         vocab = {}
         self.inverse_vocab = []
         self.positions = []

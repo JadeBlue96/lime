@@ -7,10 +7,9 @@ from functools import partial
 import numpy as np
 import sklearn
 import sklearn.preprocessing
-from sklearn.utils import check_random_state
 from skimage.color import gray2rgb
+from sklearn.utils import check_random_state
 from tqdm.auto import tqdm
-
 
 from . import lime_base
 from .wrappers.scikit_image import SegmentationAlgorithm
@@ -133,8 +132,7 @@ class LimeImageExplainer(object):
                          segmentation_fn=None,
                          distance_metric='cosine',
                          model_regressor=None,
-                         random_seed=None,
-                         progress_bar=True):
+                         random_seed=None):
         """Generates explanations for a prediction.
 
         First, we generate neighborhood data by randomly perturbing features
@@ -165,7 +163,6 @@ class LimeImageExplainer(object):
             random_seed: integer used as random seed for the segmentation
                 algorithm. If None, a random integer, between 0 and 1000,
                 will be generated using the internal random number generator.
-            progress_bar: if True, show tqdm progress bar.
 
         Returns:
             An ImageExplanation object (see lime_image.py) with the corresponding
@@ -199,8 +196,7 @@ class LimeImageExplainer(object):
 
         data, labels = self.data_labels(image, fudged_image, segments,
                                         classifier_fn, num_samples,
-                                        batch_size=batch_size,
-                                        progress_bar=progress_bar)
+                                        batch_size=batch_size)
 
         distances = sklearn.metrics.pairwise_distances(
             data,
@@ -228,8 +224,7 @@ class LimeImageExplainer(object):
                     segments,
                     classifier_fn,
                     num_samples,
-                    batch_size=10,
-                    progress_bar=True):
+                    batch_size=10):
         """Generates images and predictions in the neighborhood of this image.
 
         Args:
@@ -241,7 +236,6 @@ class LimeImageExplainer(object):
                 matrix of prediction probabilities
             num_samples: size of the neighborhood to learn the linear model
             batch_size: classifier_fn will be called on batches of this size.
-            progress_bar: if True, show tqdm progress bar.
 
         Returns:
             A tuple (data, labels), where:
@@ -249,13 +243,12 @@ class LimeImageExplainer(object):
                 labels: prediction probabilities matrix
         """
         n_features = np.unique(segments).shape[0]
-        data = self.random_state.randint(0, 2, num_samples * n_features)\
+        data = self.random_state.randint(0, 2, num_samples * n_features) \
             .reshape((num_samples, n_features))
         labels = []
         data[0, :] = 1
         imgs = []
-        rows = tqdm(data) if progress_bar else data
-        for row in rows:
+        for row in tqdm(data):
             temp = copy.deepcopy(image)
             zeros = np.where(row == 0)[0]
             mask = np.zeros(segments.shape).astype(bool)

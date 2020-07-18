@@ -1,5 +1,6 @@
-import unittest
 import sys
+import unittest
+
 from lime.utils.generic_utils import has_arg
 
 

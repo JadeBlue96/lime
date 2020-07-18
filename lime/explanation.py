@@ -1,16 +1,16 @@
 """
 Explanation class, with visualization functions.
 """
-from io import open
+import json
 import os
 import os.path
-import json
 import string
+from io import open
+
 import numpy as np
+from sklearn.utils import check_random_state
 
 from .exceptions import LimeError
-
-from sklearn.utils import check_random_state
 
 
 def id_generator(size=15, random_state=None):
@@ -307,11 +307,11 @@ class Explanation(object):
             html_data = self.local_exp[self.dummy_label]
 
         raw_js += self.domain_mapper.visualize_instance_html(
-                html_data,
-                labels[0] if self.mode == "classification" else self.dummy_label,
-                'raw_div',
-                'exp',
-                **kwargs)
+            html_data,
+            labels[0] if self.mode == "classification" else self.dummy_label,
+            'raw_div',
+            'exp',
+            **kwargs)
         out += u'''
         <script>
         var top_div = d3.select('#top_div%s').classed('lime top_div', true);
