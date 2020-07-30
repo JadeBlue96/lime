@@ -13,6 +13,10 @@ import sklearn
 from sklearn.utils import check_random_state
 import re
 
+import nltk
+nltk.download('punkt')
+from nltk.tokenize import PunktSentenceTokenizer
+
 from . import explanation
 from . import lime_base
 
