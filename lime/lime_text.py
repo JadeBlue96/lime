@@ -27,11 +27,11 @@ def clean_text(text):
     :return: text(str)
     """
     text = re.sub("'", "", text)
+	### cut spaces before full-stop
+    text = re.sub(r'\s+([?.!"])', r'\1', text)
     text = text.replace('.', 'PLACEHOLDER')
     text = re.sub("(\\W)+", " ", text)
     text = text.replace('PLACEHOLDER', '.')
-	### cut spaces before full-stop
-    text = re.sub(r'\s+([?.!"])', r'\1', text)
     return text
 	
 
@@ -116,16 +116,16 @@ class IndexedString(object):
             mask_string: If not None, replace words with this if bow=False
                 if None, default value is UNKWORDZ
         """
-        self.raw = clean_text(raw_string)
+        self.raw = raw_string
         self.mask_string = 'UNKWORDZ' if mask_string is None else mask_string
         # NLTK tokenizer
-        sentences_span = PunktSentenceTokenizer().span_tokenize(self.raw)
+        # sentences_span = PunktSentenceTokenizer().span_tokenize(self.raw)
         # Scispacy tokenizer
-        # nlp_sentencizer = en_core_sci_md.load()
-        # nlp_tokens = nlp_sentencizer(self.raw)
-        # sentences_span = []
-        #for sent in nlp_tokens.sents:
-            #sentences_span.append((sent.start_char, sent.end_char))
+        nlp_sentencizer = en_core_sci_md.load()
+        nlp_tokens = nlp_sentencizer(self.raw)
+        sentences_span = []
+        for sent in nlp_tokens.sents:
+            sentences_span.append((sent.start_char, sent.end_char))
 
         self.as_list = [self.raw[begin:end] for (begin, end) in sentences_span]
         self.as_np = np.array(self.as_list)
