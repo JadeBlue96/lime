@@ -30,6 +30,8 @@ def clean_text(text):
     text = text.replace('.', 'PLACEHOLDER')
     text = re.sub("(\\W)+", " ", text)
     text = text.replace('PLACEHOLDER', '.')
+	### cut spaces before full-stop
+    text = re.sub(r'\s+([?.!"])', r'\1', text)
     return text
 	
 
