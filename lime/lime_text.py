@@ -11,10 +11,23 @@ import numpy as np
 import scipy as sp
 import sklearn
 from sklearn.utils import check_random_state
+import re
 
 from . import explanation
 from . import lime_base
 
+def clean_text(text):
+    """
+    Cleans the letter from quotes and punctuations, whilst retaining the full stop.
+    :param text(str): raw discharge letter
+    :return: text(str)
+    """
+    text = re.sub("'", "", text)
+    text = text.replace('.', 'PLACEHOLDER')
+    text = re.sub("(\\W)+", " ", text)
+    text = text.replace('PLACEHOLDER', '.')
+    return text
+	
 
 class TextDomainMapper(explanation.DomainMapper):
     """Maps feature ids to words or word-positions"""
@@ -97,7 +110,7 @@ class IndexedString(object):
             mask_string: If not None, replace words with this if bow=False
                 if None, default value is UNKWORDZ
         """
-        self.raw = raw_string
+        self.raw = clean_text(raw_string)
         self.mask_string = 'UNKWORDZ' if mask_string is None else mask_string
         # NLTK tokenizer
         sentences_span = PunktSentenceTokenizer().span_tokenize(self.raw)
