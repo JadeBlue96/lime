@@ -100,13 +100,13 @@ class IndexedString(object):
         self.raw = raw_string
         self.mask_string = 'UNKWORDZ' if mask_string is None else mask_string
         # NLTK tokenizer
-        # sentences_span = PunktSentenceTokenizer().span_tokenize(self.raw)
+        sentences_span = PunktSentenceTokenizer().span_tokenize(self.raw)
         # Scispacy tokenizer
-        nlp_sentencizer = en_core_sci_md.load()
-        nlp_tokens = nlp_sentencizer(self.raw)
-        sentences_span = []
-        for sent in nlp_tokens.sents:
-            sentences_span.append((sent.start_char, sent.end_char))
+        # nlp_sentencizer = en_core_sci_md.load()
+        # nlp_tokens = nlp_sentencizer(self.raw)
+        # sentences_span = []
+        #for sent in nlp_tokens.sents:
+            #sentences_span.append((sent.start_char, sent.end_char))
 
         self.as_list = [self.raw[begin:end] for (begin, end) in sentences_span]
         self.as_np = np.array(self.as_list)
